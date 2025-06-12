@@ -132,7 +132,7 @@ const playDemonicLaugh = () => {
 
     try {
       const payload = { contents: apiContentsForGemini };
-      const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
       if (!apiKey) {
   console.error("Gemini API key is missing. Check your .env file.");
 }
