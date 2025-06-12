@@ -10,33 +10,33 @@ const App = () => {
   const utteranceRef = useRef(null);
 
   // Initialize speech synthesis and set up RAVANA's voice
-const laughAudioRef = useRef(null); // NEW REF
+  const laughAudioRef = useRef(null); // NEW REF
 
-useEffect(() => {
-  synthRef.current = window.speechSynthesis;
+  useEffect(() => {
+    synthRef.current = window.speechSynthesis;
 
-  // Initialize laugh audio
-  laughAudioRef.current = new Audio('/sounds/ravana_laugh.mp3');
-  laughAudioRef.current.volume = 0.85;
+    // Initialize laugh audio
+    laughAudioRef.current = new Audio('/sounds/ravana_laugh.mp3');
+    laughAudioRef.current.volume = 0.85;
 
-  const initialGreeting = {
-    role: 'model',
-    text: 'I am RAVANA... the ten-headed demon king of Lanka. Your soul trembles before my ancient wisdom. What knowledge do you seek from the depths of darkness?'
-  };
-  setChatHistory([initialGreeting]);
+    const initialGreeting = {
+      role: 'model',
+      text: 'I am RAVANA... the ten-headed demon king of Lanka. Your soul trembles before my ancient wisdom. What knowledge do you seek from the depths of darkness?'
+    };
+    setChatHistory([initialGreeting]);
 
-  setTimeout(() => {
-    speakMessage(initialGreeting.text);
-  }, 500);
+    setTimeout(() => {
+      speakMessage(initialGreeting.text);
+    }, 500);
 
-  return () => {
-    if (synthRef.current.speaking) {
-      synthRef.current.cancel();
-    }
-    laughAudioRef.current?.pause();
-    laughAudioRef.current = null;
-  };
-}, []);
+    return () => {
+      if (synthRef.current.speaking) {
+        synthRef.current.cancel();
+      }
+      laughAudioRef.current?.pause();
+      laughAudioRef.current = null;
+    };
+  }, []);
 
 
   useEffect(() => {
@@ -44,52 +44,52 @@ useEffect(() => {
   }, [chatHistory]);
 
   // Play RAVANA's cruel laugh
-const playDemonicLaugh = () => {
-  if (!laughAudioRef.current) return;
+  const playDemonicLaugh = () => {
+    if (!laughAudioRef.current) return;
 
-  laughAudioRef.current.currentTime = 0;
-  laughAudioRef.current
-    .play()
-    .catch((error) => console.error('Error playing demonic laugh:', error));
-};
+    laughAudioRef.current.currentTime = 0;
+    laughAudioRef.current
+      .play()
+      .catch((error) => console.error('Error playing demonic laugh:', error));
+  };
 
 
   // Enhanced demonic voice function
   const speakMessage = (text) => {
     if (!synthRef.current) return;
-    
+
     if (synthRef.current.speaking) {
       synthRef.current.cancel();
     }
-    
+
     const utterance = new SpeechSynthesisUtterance(text);
     utteranceRef.current = utterance;
-    
+
     // Enhanced demonic voice settings - faster than before
     utterance.rate = 0.85; // Faster speech for better experience
     utterance.pitch = 0.3; // Much deeper pitch for demonic effect
     utterance.volume = 1;
-    
+
     // Try to find the most suitable male voice
     const voices = synthRef.current.getVoices();
-    const demonicVoice = voices.find(voice => 
-      (voice.name.includes('Microsoft David') || 
-       voice.name.includes('Google UK English Male') ||
-       voice.name.includes('Alex') ||
-       voice.name.includes('Daniel') ||
-       voice.name.includes('Microsoft Mark') ||
-       voice.gender === 'male') &&
+    const demonicVoice = voices.find(voice =>
+      (voice.name.includes('Microsoft David') ||
+        voice.name.includes('Google UK English Male') ||
+        voice.name.includes('Alex') ||
+        voice.name.includes('Daniel') ||
+        voice.name.includes('Microsoft Mark') ||
+        voice.gender === 'male') &&
       voice.lang.includes('en')
     ) || voices.find(voice => voice.lang.includes('en-US') || voice.lang.includes('en-GB'));
-    
+
     if (demonicVoice) {
       utterance.voice = demonicVoice;
     }
-    
+
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
-    
+
     synthRef.current.speak(utterance);
   };
 
@@ -124,7 +124,7 @@ const playDemonicLaugh = () => {
     setChatHistory((prev) => [...prev, currentUserMessage]);
     setPrompt('');
     setIsLoading(true);
-    
+
     // Play demonic laugh when RAVANA starts thinking
     setTimeout(() => {
       playDemonicLaugh();
@@ -134,8 +134,8 @@ const playDemonicLaugh = () => {
       const payload = { contents: apiContentsForGemini };
       const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
       if (!apiKey) {
-  console.error("Gemini API key is missing. Check your .env file.");
-}
+        console.error("Gemini API key is missing. Check your .env file.");
+      }
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
       const response = await fetch(apiUrl, {
@@ -147,8 +147,8 @@ const playDemonicLaugh = () => {
       const result = await response.json();
 
       if (result.candidates && result.candidates.length > 0 &&
-          result.candidates[0].content && result.candidates[0].content.parts &&
-          result.candidates[0].content.parts.length > 0) {
+        result.candidates[0].content && result.candidates[0].content.parts &&
+        result.candidates[0].content.parts.length > 0) {
         const botResponseText = result.candidates[0].content.parts[0].text;
         const botMessage = { role: 'model', text: botResponseText };
         setChatHistory((prev) => [...prev, botMessage]);
@@ -194,7 +194,7 @@ const playDemonicLaugh = () => {
             </h1>
           </div>
           {isSpeaking && (
-            <button 
+            <button
               onClick={stopSpeaking}
               className="text-red-400 hover:text-red-300 transition-colors text-sm"
               title="Silence"
@@ -215,11 +215,10 @@ const playDemonicLaugh = () => {
                   <div className="w-2 h-2 bg-red-600 rounded-full mt-2 animate-pulse"></div>
                 )}
                 <div
-                  className={`max-w-3xl break-words ${
-                    message.role === 'user'
+                  className={`max-w-3xl break-words ${message.role === 'user'
                       ? 'text-gray-400 text-right ml-auto'
                       : 'text-red-100'
-                  }`}
+                    }`}
                 >
                   <div className={`text-xs mb-2 ${message.role === 'user' ? 'text-gray-600' : 'text-red-800'}`}>
                     {message.role === 'user' ? 'MORTAL' : 'RAVANA'}
@@ -228,12 +227,15 @@ const playDemonicLaugh = () => {
                     {message.text}
                   </div>
                   {message.role === 'model' && (
-                    <button 
+                    <button
                       onClick={() => speakMessage(message.text)}
-                      className="text-xs text-red-700 hover:text-red-500 mt-3 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="text-xs text-red-700 hover:text-red-500 mt-3 
+             opacity-100 sm:opacity-0 sm:group-hover:opacity-100 
+             transition-opacity"
                     >
                       [SPEAK]
                     </button>
+
                   )}
                 </div>
                 {message.role === 'user' && (
@@ -242,7 +244,7 @@ const playDemonicLaugh = () => {
               </div>
             </div>
           ))}
-          
+
           {/* Loading indicator */}
           {isLoading && (
             <div className="flex items-start space-x-4">
@@ -275,8 +277,8 @@ const playDemonicLaugh = () => {
                   onChange={handleInputChange}
                   onKeyPress={handleKeyPress}
                   rows={1}
-                  style={{ 
-                    minHeight: '24px', 
+                  style={{
+                    minHeight: '24px',
                     maxHeight: '120px',
                     lineHeight: '24px'
                   }}
@@ -285,11 +287,10 @@ const playDemonicLaugh = () => {
                 <button
                   onClick={handleSendMessage}
                   disabled={isLoading || prompt.trim() === '' || isSpeaking}
-                  className={`absolute right-0 bottom-2 text-sm transition-colors ${
-                    isLoading || prompt.trim() === '' || isSpeaking
+                  className={`absolute right-0 bottom-2 text-sm transition-colors ${isLoading || prompt.trim() === '' || isSpeaking
                       ? 'text-gray-800 cursor-not-allowed'
                       : 'text-red-600 hover:text-red-400'
-                  }`}
+                    }`}
                 >
                   {isSpeaking ? '[SPEAKING]' : isLoading ? '[LAUGHING]' : '[SUMMON]'}
                 </button>
